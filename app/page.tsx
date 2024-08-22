@@ -47,37 +47,37 @@ const Home = async () => {
               {option.title}
             </Button>
           ))}
+        </div>
 
-          {/* IMAGEM */}
-          <div className="relative mt-6 h-[150px] w-full">
-            <Image
-              alt="Agende nos melhores com FSW Barber"
-              src="/banner-01.png"
-              fill
-              className="rounded-xl object-cover"
-            />
-          </div>
+        {/* IMAGEM */}
+        <div className="relative mt-6 h-[150px] w-full">
+          <Image
+            alt="Agende nos melhores com FSW Barber"
+            src="/banner-01.png"
+            fill
+            className="rounded-xl object-cover"
+          />
+        </div>
 
-          {/* AGENDAMENTO */}
-          <BookingItem />
+        {/* AGENDAMENTO */}
+        <BookingItem />
 
-          <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
-            Recomendados
-          </h2>
-          <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
-            {barbershops.map((barbershop) => (
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
-            ))}
-          </div>
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
+          Recomendados
+        </h2>
+        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {barbershops.map((barbershop) => (
+            <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+          ))}
+        </div>
 
-          <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
-            Populares
-          </h2>
-          <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
-            {popularBarbershops.map((barbershop) => (
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
-            ))}
-          </div>
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
+          Populares
+        </h2>
+        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {popularBarbershops.map((barbershop) => (
+            <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+          ))}
         </div>
 
         <footer>

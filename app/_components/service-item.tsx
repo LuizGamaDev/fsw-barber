@@ -16,8 +16,10 @@ import {
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
-import { format } from "date-fns"
-//import BarbershopItem from "./barbershop-item"
+import { format, set } from "date-fns"
+import { createBooking } from "../_actions/create-booking"
+//import { useSession } from "next-auth/react"
+import { toast } from "sonner"
 
 interface ServiceItemProps {
   service: BarbershopService
@@ -49,8 +51,9 @@ const TIME_LIST = [
 ]
 
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
+  //const { data } = useSession()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
-  const [SelectedTime, setSelectedTime] = useState<undefined | undefined>(
+  const [SelectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   )
 
@@ -60,6 +63,30 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time)
+  }
+
+  const handleCreateBooking = async () => {
+    // 1. Não exibir horários já agendados
+    // 2. Salvar o agendamento para o usuário logado
+    try {
+      if (!selectedDay || !SelectedTime) return
+      // ["09":"00"]
+      const hour = Number(SelectedTime.split(":")[0])
+      const minute = Number(SelectedTime.split(":")[1])
+      const newDate = set(selectedDay, {
+        minutes: minute,
+        hours: hour,
+      })
+      await createBooking({
+        serviceId: service.id,
+        userId: "cm0hqsgoo000013j4o3ttpj49",
+        date: newDate,
+      })
+      toast.success("Reserva criada com sucesso!")
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao criar reserva!")
+    }
   }
 
   return (
@@ -184,7 +211,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
                 <SheetFooter className="px-5">
                   <SheetClose asChild>
-                    <Button type="submit">Confirmar</Button>
+                    <Button onClick={handleCreateBooking}>Confirmar</Button>
                   </SheetClose>
                 </SheetFooter>
               </SheetContent>

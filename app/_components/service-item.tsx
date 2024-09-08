@@ -18,7 +18,7 @@ import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { format, set } from "date-fns"
 import { createBooking } from "../_actions/create-booking"
-//import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
 interface ServiceItemProps {
@@ -51,7 +51,7 @@ const TIME_LIST = [
 ]
 
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
-  //const { data } = useSession()
+  const { data } = useSession()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [SelectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
@@ -67,7 +67,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   const handleCreateBooking = async () => {
     // 1. Não exibir horários já agendados
-    // 2. Salvar o agendamento para o usuário logado
+    // 2. Não deixar o usuário reservar se não estiver logado
     try {
       if (!selectedDay || !SelectedTime) return
       // ["09":"00"]
@@ -79,7 +79,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       })
       await createBooking({
         serviceId: service.id,
-        userId: "cm0hqsgoo000013j4o3ttpj49",
+        userId: (data?.user as any).id,
         date: newDate,
       })
       toast.success("Reserva criada com sucesso!")
@@ -209,9 +209,14 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                   </div>
                 )}
 
-                <SheetFooter className="px-5">
+                <SheetFooter className="mt-5 px-5">
                   <SheetClose asChild>
-                    <Button onClick={handleCreateBooking}>Confirmar</Button>
+                    <Button
+                      onClick={handleCreateBooking}
+                      disabled={!selectedDay || !SelectedTime}
+                    >
+                      Confirmar
+                    </Button>
                   </SheetClose>
                 </SheetFooter>
               </SheetContent>

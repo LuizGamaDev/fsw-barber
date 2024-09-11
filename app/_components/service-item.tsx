@@ -6,17 +6,15 @@ import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "./ui/sheet"
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useEffect, useState } from "react"
-import { format, set } from "date-fns"
+import { addDays, format, set } from "date-fns"
 import { createBooking } from "../_actions/create-booking"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
@@ -74,8 +72,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const [SelectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   )
-
   const [dayBookings, setDayBookings] = useState<Booking[]>([])
+  const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
@@ -89,6 +87,13 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     fetch()
   }, [selectedDay, service.id])
 
+  const handleBookingSheetOpenChange = () => {
+    setSelectedDay(undefined)
+    setSelectedTime(undefined)
+    setDayBookings([])
+    setBookingSheetIsOpen(false)
+  }
+
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDay(date)
   }
@@ -98,11 +103,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   }
 
   const handleCreateBooking = async () => {
-    // 1. Não exibir horários já agendados
-    // 2. Não deixar o usuário reservar se não estiver logado
     try {
       if (!selectedDay || !SelectedTime) return
-      // ["09":"00"]
+
       const hour = Number(SelectedTime.split(":")[0])
       const minute = Number(SelectedTime.split(":")[1])
       const newDate = set(selectedDay, {
@@ -114,6 +117,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
         userId: (data?.user as any).id,
         date: newDate,
       })
+      handleBookingSheetOpenChange()
       toast.success("Reserva criada com sucesso!")
     } catch (error) {
       console.error(error)
@@ -146,12 +150,18 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
               }).format(Number(service.price))}
             </p>
 
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="secondary" size="sm">
-                  Reservar
-                </Button>
-              </SheetTrigger>
+            <Sheet
+              open={bookingSheetIsOpen}
+              onOpenChange={handleBookingSheetOpenChange}
+            >
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setBookingSheetIsOpen(true)}
+              >
+                Reservar
+              </Button>
+
               <SheetContent className="px-0">
                 <SheetHeader>
                   <SheetTitle>Fazer Reserva</SheetTitle>
@@ -163,6 +173,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     locale={ptBR}
                     selected={selectedDay}
                     onSelect={handleDateSelect}
+                    fromDate={addDays(new Date(), 1)}
                     styles={{
                       head_cell: {
                         width: "100%",
@@ -242,14 +253,12 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                 )}
 
                 <SheetFooter className="mt-5 px-5">
-                  <SheetClose asChild>
-                    <Button
-                      onClick={handleCreateBooking}
-                      disabled={!selectedDay || !SelectedTime}
-                    >
-                      Confirmar
-                    </Button>
-                  </SheetClose>
+                  <Button
+                    onClick={handleCreateBooking}
+                    disabled={!selectedDay || !SelectedTime}
+                  >
+                    Confirmar
+                  </Button>
                 </SheetFooter>
               </SheetContent>
             </Sheet>

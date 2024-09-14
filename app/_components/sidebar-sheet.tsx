@@ -29,7 +29,7 @@ const SidebarSheet = () => {
             </Avatar>
 
             <div>
-              <p className="font-bol">{data.user.name}</p>
+              <p className="font-bold">{data.user.name}</p>
               <p className="text-xs">{data.user.email}</p>
             </div>
           </div>
@@ -68,12 +68,7 @@ const SidebarSheet = () => {
       <div className="flex flex-col gap-2 border-b border-solid py-5">
         {quickSearchOptions.map((option) => (
           <SheetClose key={option.title} asChild>
-            <Button
-              key={option.title}
-              className="justify-start gap-2"
-              variant="ghost"
-              asChild
-            >
+            <Button className="justify-start gap-2" variant="ghost" asChild>
               <Link href={`/barbershops?service=${option.title}`}>
                 <Image
                   alt={option.title}
@@ -88,16 +83,18 @@ const SidebarSheet = () => {
         ))}
       </div>
 
-      <div className="flex flex-col gap-2 py-5">
-        <Button
-          variant="ghost"
-          className="justify-start gap-2"
-          onClick={handleLogoutClick}
-        >
-          <LogOutIcon size={18} />
-          Sair da conta
-        </Button>
-      </div>
+      {data?.user && (
+        <div className="flex flex-col gap-2 py-5">
+          <Button
+            variant="ghost"
+            className="justify-start gap-2"
+            onClick={handleLogoutClick}
+          >
+            <LogOutIcon size={18} />
+            Sair da conta
+          </Button>
+        </div>
+      )}
     </SheetContent>
   )
 }

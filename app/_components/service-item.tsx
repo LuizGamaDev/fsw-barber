@@ -168,7 +168,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => handleBookingClick}
+                  onClick={handleBookingClick}
                 >
                   Reservar
                 </Button>

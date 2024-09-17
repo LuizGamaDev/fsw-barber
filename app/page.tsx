@@ -33,6 +33,9 @@ const Home = async () => {
             },
           },
         },
+        orderBy: {
+          date: "asc",
+        },
       })
     : []
 

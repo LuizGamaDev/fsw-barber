@@ -24,6 +24,9 @@ const bookings = async () => {
         },
       },
     },
+    orderBy: {
+      date: "asc",
+    },
   })
   const concludedBookings = await db.booking.findMany({
     where: {
